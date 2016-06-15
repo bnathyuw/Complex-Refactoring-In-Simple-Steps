@@ -4,44 +4,22 @@ namespace PostageCalculator
 {
     public class Calculator
     {
-        private const int MaximumSmallWeight = 60;
-        private const int MaximumSmallHeight = 229;
-        private const int MaximumSmallWidth = 162;
-        private const int MaximumSmallDepth = 25;
-        private const int MaximumMediumWeight = 500;
-        private const int MaximumMediumHeight = 324;
-        private const int MaximumMediumWidth = 229;
-        private const int MaximumMediumDepth = 100;
-        private const decimal SmallPackagePostage = 120m;
-        private const int MediumPackageMultiplier = 4;
-        private const int LargePackageMultiplier = 6;
-        private const int CurrencyConversionCharge = 200;
-        private const decimal GbpToEur = 1.25m;
-        private const decimal GbpToChf = 1.36m;
-        private const decimal MillilitresInLitre = 1000m;
-
         public Money Calculate(int weight, int height, int width, int depth, Currency currency)
         {
-            var postageInBaseCurrency = PostageInBaseCurrency(weight, height, width, depth);
-            return ConvertCurrency(postageInBaseCurrency, currency);
+            return ConvertCurrency(PostageInBaseCurrency(weight, height, width, depth), currency);
         }
 
         private decimal PostageInBaseCurrency(int weight, int height, int width, int depth)
         {
-            if (weight <= MaximumSmallWeight && height <= MaximumSmallHeight && width <= MaximumSmallWidth && depth <= MaximumSmallDepth)
+            if (weight <= 60 && height <= 229 && width <= 162 && depth <= 25)
             {
-                return SmallPackagePostage;
+                return 120m;
             }
-            if (weight <= MaximumMediumWeight && height <= MaximumMediumHeight && width <= MaximumMediumWidth && depth <= MaximumMediumDepth)
+            if (weight <= 500 && height <= 324 && width <= 229 && depth <= 100)
             {
-                return weight*MediumPackageMultiplier;
+                return weight*4;
             }
-            return Math.Max(weight, Volume(height, width, depth))*LargePackageMultiplier;
-        }
-
-        private static decimal Volume(int height, int width, int depth)
-        {
-            return height*width*depth/MillilitresInLitre;
+            return Math.Max(weight, height*width*depth/1000m)*6;
         }
 
         private Money ConvertCurrency(decimal amountInBaseCurrency, Currency currency)
@@ -49,9 +27,9 @@ namespace PostageCalculator
             if (currency == Currency.Gbp)
                 return new Money(Currency.Gbp, amountInBaseCurrency);
             if(currency == Currency.Eur)
-                return new Money(Currency.Eur, (amountInBaseCurrency + CurrencyConversionCharge) * GbpToEur);
+                return new Money(Currency.Eur, (amountInBaseCurrency + 200) * 1.25m);
             if(currency == Currency.Chf)
-                return new Money(Currency.Chf, (amountInBaseCurrency + CurrencyConversionCharge) * GbpToChf);
+                return new Money(Currency.Chf, (amountInBaseCurrency + 200) * 1.36m);
             throw new Exception("Currency not supported");
         }
     }
