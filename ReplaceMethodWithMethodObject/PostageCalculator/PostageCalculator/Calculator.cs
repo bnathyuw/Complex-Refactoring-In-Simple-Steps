@@ -6,7 +6,8 @@ namespace PostageCalculator
     {
         public Money Calculate(int weight, int height, int width, int depth, Currency currency)
         {
-            return ConvertCurrency(PostageInBaseCurrency(weight, height, width, depth), currency);
+            var postageInBaseCurrency = PostageInBaseCurrency(weight, height, width, depth);
+            return ConvertCurrency(postageInBaseCurrency, currency);
         }
 
         private decimal PostageInBaseCurrency(int weight, int height, int width, int depth)
